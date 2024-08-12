@@ -2,6 +2,7 @@ const currencyExchangeByDate = async (transaction_date, currency) => {
   let curr1ToCurr2 = {};
   //   console.log(transaction_date);
   const url = `${process.env.CURRENCY_EXCHANGE_BY_DATE}/${transaction_date}?from=${currency}&to=INR%2CGBP`;
+  // console.log(url)
   const options = {
     method: "GET",
     headers: {
@@ -16,7 +17,7 @@ const currencyExchangeByDate = async (transaction_date, currency) => {
     const result = await response.json();
     // console.log(result);
     curr1ToCurr2 = result.rates;
-    // console.log(curr1ToCurr2);
+    // console.log(curr1ToCurr2.INR);
     return curr1ToCurr2;
   } catch (error) {
     console.error(error);

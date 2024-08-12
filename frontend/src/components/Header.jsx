@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { FaRegUserCircle } from "react-icons/fa";
-import { IoIosArrowRoundBack, IoIosNotifications } from "react-icons/io";
+// import { FaRegUserCircle } from "react-icons/fa";
+// import { IoIosArrowRoundBack, IoIosNotifications } from "react-icons/io";
 import { FaArrowLeft } from "react-icons/fa6";
 
 import { Link } from "react-router-dom";
@@ -19,7 +19,7 @@ const Header = () => {
       </Link>
 
       <div className="flex justify-between items-center">
-        <div className="text-2xl md:text-4xl mr-6 relative">
+        {/* <div className="text-2xl md:text-4xl mr-6 relative">
           <Link
             to={"/notifiactions"}
             onClick={() => window.scrollTo({ top: "0" })}
@@ -29,7 +29,7 @@ const Header = () => {
               2
             </div>
           </Link>
-        </div>
+        </div> */}
         <div className="relative">
           <div className="flex text-2xl md:text-5xl md:px-4 items-center space-x-2">
             <div className="max-w-[50px] max-h-[50px]">
@@ -42,7 +42,7 @@ const Header = () => {
             <div className="flex-col">
               <div className=" text-base">
                 <div className="flex">
-                  <div className="text-white">Jason Lee L.W.</div>
+                  <div className="text-white">Mohak_Zluri</div>
                   <MdArrowDropDown
                     onClick={() => setShowMenu(!showMenu)}
                     className="flex justify-center items-center text-2xl text-white"
@@ -50,7 +50,7 @@ const Header = () => {
                 </div>
               </div>
 
-              <div className="text-base text-gray-400">Sales Lead</div>
+              <div className="text-base text-gray-400">SDE Intern</div>
             </div>
           </div>
           <DropdownMenu showMenu={showMenu} setShowMenu={setShowMenu} />

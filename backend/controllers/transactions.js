@@ -9,11 +9,13 @@ const currencyExchangeByDate = require("../utils/currencyExchangeByDate");
 // Controller function to add a new transaction
 const addTransaction = async (req, res) => {
   try {
+    // console.log(req);
     const { transaction_date, description, amount, currency } = req.body;
     if (amount < 0) {
       throw new Error("amount not be negative");
     }
     let curr1ToCurr2 = await currencyExchangeByDate(transaction_date, currency);
+    // console.log(curr1ToCurr2)
     const convertedAmount = curr1ToCurr2[currency];
     // console.log(amount, amount / convertedAmount, "check");
     const amountInEUR = amount / convertedAmount;
