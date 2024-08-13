@@ -14,12 +14,13 @@ const addTransaction = async (req, res) => {
     if (amount < 0) {
       throw new Error("amount not be negative");
     }
-    let curr1ToCurr2 = await currencyExchangeByDate(transaction_date, currency);
+    // let curr1ToCurr2 = await currencyExchangeByDate(transaction_date, currency);
+    let curr1ToCurr2 = await fetchConversion_rates();
     // console.log(curr1ToCurr2)
     const convertedAmount = curr1ToCurr2[currency];
     // console.log(amount, amount / convertedAmount, "check");
-    const amountInEUR = amount / convertedAmount;
-    const amountInINR = amountInEUR * curr1ToCurr2.INR;
+    const amountInINR = amount / convertedAmount;
+    // const amountInINR = amountInEUR * curr1ToCurr2.INR;
     // console.log(typeof transaction_date, transaction_date);
     // Insert query to add a new transaction
     const query = `
@@ -114,24 +115,21 @@ const deleteTransaction = async (req, res) => {
 // Controller function to get paginated transactions
 const getPaginatedTransactions = async (req, res) => {
   try {
-    const { page = 1 } = req.query; // Get the page number from query parameters, default to 1
+    const { page = 1 } = req.query;
     const transactionsPerPage = process.env.PAGINATION_SIZE;
     const offset = (page - 1) * transactionsPerPage;
-    // console.log(page);
 
-    // Query to fetch transactions with pagination
+    // Query to fetch transactions with pagination and sorting
     const query = `
       SELECT *
       FROM transactions
-      ORDER BY id DESC
+      ORDER BY transaction_date ASC, id ASC
       LIMIT $1 OFFSET $2;`;
 
-    // Execute the query with limit and offset
     const result = await db.query(query, [transactionsPerPage, offset]);
 
-    // Check if there are rows returned from the query
     if (result.rows.length > 0) {
-      res.json(result.rows); // Return the transactions data
+      res.json(result.rows);
     } else {
       res.status(404).json({ error: "No transactions found" });
     }
@@ -158,6 +156,32 @@ const getSingleTransaction = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch transaction" });
   }
 };
+const parseAndSortCSV = (fileContent) => {
+  // const fileContent = fs.readFileSync(filePath, 'utf8');
+
+  // Split content into lines
+  const lines = fileContent.split('\n').filter(line => line.trim() !== '');
+
+  // Get the headers and rows
+  const headers = lines[0].split(',');
+  const rows = lines.slice(1).map(line => {
+    const values = line.split(',');
+    const rowObject = {};
+    headers.forEach((header, index) => {
+      rowObject[header.trim()] = values[index] ? values[index].trim() : null;
+    });
+    return rowObject;
+  });
+
+  // Sort the rows by date (assuming the date is in DD-MM-YYYY format)
+  rows.sort((a, b) => {
+    const dateA = new Date(a['Date'].split('-').reverse().join('-'));
+    const dateB = new Date(b['Date'].split('-').reverse().join('-'));
+    return dateB - dateA;
+  });
+
+  return rows;
+};
 
 const uploadCSV = async (req, res) => {
   // console.log(req.file);
@@ -166,12 +190,17 @@ const uploadCSV = async (req, res) => {
   try {
     // Read the uploaded CSV file
     const fileContent = fs.readFileSync(filePath, "utf8");
-
+  //  console.log(fileContent)
     // Parse CSV data
-    const results = Papa.parse(fileContent, { header: true });
-    const transactions = results.data;
-    // console.log(transactions[0]);
-
+    // const results = Papa.parse(fileContent, { header: true });
+    const results=parseAndSortCSV(fileContent);
+    const transactions = results;
+    // console.log(results);
+    // transactions.sort((a, b) => {
+    //   const dateA = new Date(a.Date.split("-").reverse().join("-"));
+    //   const dateB = new Date(b.Date.split("-").reverse().join("-"));
+    //   return dateB - dateA;
+    // });
     await db.query("BEGIN");
 
     const queryText = `
@@ -179,19 +208,19 @@ const uploadCSV = async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
     `;
 
-    let curr1ToCurr2 = await fetchConversion_rates();
+    let c1ToC2 = await fetchConversion_rates();
 
     // console.log(curr1ToCurr2.USD);
 
-    let countOfEmptyFields = 0;
-    const validCurrencies = Object.keys(curr1ToCurr2);
+    // let countOfEmptyFields = 0;
+    const validCurrencies = Object.keys(c1ToC2);
     const today = new Date();
 
     for (const transaction of transactions) {
       const { Description, Currency } = transaction;
-      if (countOfEmptyFields >= 1) {
-        throw new Error("Validation failed.");
-      }
+      // if (countOfEmptyFields >= 1) {
+      //   throw new Error("Validation failed.");
+      // }
 
       if (
         !transaction.Date ||
@@ -199,15 +228,16 @@ const uploadCSV = async (req, res) => {
         !transaction.Description ||
         !transaction.Currency
       ) {
-        console.warn("Skipping invalid transaction:", transaction);
-        countOfEmptyFields += 1;
-        if (countOfEmptyFields > 1) {
-          throw new Error("Validation failed.");
-        }
+        console.warn("Skipping invalid transaction with no description:", transaction);
+        // countOfEmptyFields += 1;
+        // if (countOfEmptyFields > 1) {
+        //   throw new Error("Validation failed.");
+        // }
         continue; // Skip this transaction and move to the next one
       }
 
       const transactionDate = transaction.Date.split("-").reverse().join("-"); // DD-MM-YYYY to YYYY-MM-DD
+      // console.log(transactionDate,typeof transactionDate)
 
       const transaction_Date = new Date(transactionDate);
       // console.log(today, transaction_Date);
@@ -219,10 +249,10 @@ const uploadCSV = async (req, res) => {
           "Skipping transaction with invalid or future date:",
           transaction
         );
-        countOfEmptyFields += 1;
-        if (countOfEmptyFields > 1) {
-          throw new Error("Validation failed.");
-        }
+        // countOfEmptyFields += 1;
+        // if (countOfEmptyFields > 1) {
+        //   throw new Error("Validation failed.");
+        // }
         continue;
       }
 
@@ -231,10 +261,10 @@ const uploadCSV = async (req, res) => {
           "Skipping transaction with invalid currency:",
           transaction
         );
-        countOfEmptyFields += 1;
-        if (countOfEmptyFields > 1) {
-          throw new Error("Validation failed.");
-        }
+        // countOfEmptyFields += 1;
+        // if (countOfEmptyFields > 1) {
+        //   throw new Error("Validation failed.");
+        // }
         continue;
       }
       if (Description.trim() === "") {
@@ -242,24 +272,35 @@ const uploadCSV = async (req, res) => {
           "Skipping transaction with empty description:",
           transaction
         );
-        countOfEmptyFields += 1;
-        if (countOfEmptyFields > 1) {
-          throw new Error("Validation failed.");
-        }
+        // countOfEmptyFields += 1;
+        // if (countOfEmptyFields > 1) {
+        //   throw new Error("Validation failed.");
+        // }
         continue;
       }
+// console.log(transaction_Date,typeof transaction_Date)
+// console.log(Currency,typeof Currency)
+      // let curr1ToCurr2 = await currencyExchangeByDate(transactionDate, Currency);
+        
+      // console.log(curr1ToCurr2)
 
       // console.log(transactionDate);
 
-      const amount = parseInt(transaction.Amount);
+      const amount = parseFloat(transaction.Amount);
       if (amount < 0) {
-        throw new Error("amount not be negative");
+        console.warn(
+          "Skipping transaction with invalid amount:",
+          transaction
+        );
+        continue;
       }
 
       // console.log(Description);
-      const convertedAmount = curr1ToCurr2[Currency];
+      const convertedAmount = c1ToC2[Currency];
       // console.log(amount, amount / convertedAmount);
-      const amountInINR = amount / convertedAmount;
+      const amountInINR = (amount / convertedAmount).toFixed(3);
+      // const amountInINR = amountInEUR * curr1ToCurr2.INR;
+
       // console.log(amount,amountInINR);
       await db.query(queryText, [
         transactionDate,
@@ -270,10 +311,10 @@ const uploadCSV = async (req, res) => {
       ]);
     }
 
-    console.log(countOfEmptyFields);
-    if (countOfEmptyFields <= 1) {
+    // console.log(countOfEmptyFields);
+    // if (countOfEmptyFields <= 1) {
       await db.query("COMMIT");
-    }
+    // }
     res.status(200).json({ message: "CSV data uploaded successfully" });
   } catch (e) {
     await db.query("ROLLBACK");
@@ -288,23 +329,23 @@ const uploadCSV = async (req, res) => {
   }
 };
 
-const deleteTransactionMultiple = async (req, res) => {
-  const { transactionIds } = req.body;
+// const deleteTransactionMultiple = async (req, res) => {
+//   const { transactionIds } = req.body;
 
-  if (!Array.isArray(transactionIds) || transactionIds.length === 0) {
-    return res.status(400).json({ error: "Invalid transaction IDs" });
-  }
+//   if (!Array.isArray(transactionIds) || transactionIds.length === 0) {
+//     return res.status(400).json({ error: "Invalid transaction IDs" });
+//   }
 
-  const queryText = "DELETE FROM transactions WHERE id = ANY($1)";
+//   const queryText = "DELETE FROM transactions WHERE id = ANY($1)";
 
-  try {
-    await db.query(queryText, [transactionIds]);
-    res.status(200).json({ message: "Transactions deleted successfully" });
-  } catch (err) {
-    console.error("Error deleting transactions:", err);
-    res.status(500).json({ error: "Failed to delete transactions" });
-  }
-};
+//   try {
+//     await db.query(queryText, [transactionIds]);
+//     res.status(200).json({ message: "Transactions deleted successfully" });
+//   } catch (err) {
+//     console.error("Error deleting transactions:", err);
+//     res.status(500).json({ error: "Failed to delete transactions" });
+//   }
+// };
 
 module.exports = {
   addTransaction,
@@ -313,5 +354,5 @@ module.exports = {
   getPaginatedTransactions,
   getSingleTransaction,
   uploadCSV,
-  deleteTransactionMultiple,
+  // deleteTransactionMultiple,
 };

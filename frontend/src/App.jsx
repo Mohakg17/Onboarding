@@ -1,17 +1,17 @@
-import React from "react";
+// import React from "react";
 import TransactionList from "./pages/TransactionList";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import toast, { Toaster } from "react-hot-toast";
 
-document.body.style.zoom = "75%";
+document.body.style.zoom = "100%";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Header />
       <Toaster />
-      <div className="pt-16 min-h-[calc(100vh)] h-full  relative">
+      <div className="pt-16 min-h-[calc(100vh)] h-full  relative bg-blue-50">
         <Routes>
           <Route path="" element={<TransactionList />} />
         </Routes>

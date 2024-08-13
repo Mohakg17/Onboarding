@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 
 const DropdownMenu = ({ showMenu, setShowMenu }) => {
   return (
@@ -8,24 +8,19 @@ const DropdownMenu = ({ showMenu, setShowMenu }) => {
       }`}
     >
       <ul className="py-1">
-        <li
-          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => setShowMenu(false)}
-        >
-          Profile
-        </li>
-        <li
-          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => setShowMenu(false)}
-        >
-          Settings
-        </li>
-        <li
-          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-          onClick={() => setShowMenu(false)}
-        >
-          Logout
-        </li>
+      <li
+        className="px-4 py-2 text-blue-600 hover:bg-gray-200 hover:text-blue-800 cursor-pointer"
+        onClick={() => setShowMenu(false)}
+      >
+        Profile
+      </li>
+      <li
+        className="px-4 py-2 text-blue-600 hover:bg-gray-200 hover:text-blue-800 cursor-pointer"
+        onClick={() => setShowMenu(false)}
+      >
+        Logout
+      </li>
+
       </ul>
     </div>
   );

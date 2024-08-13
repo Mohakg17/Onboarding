@@ -66,93 +66,92 @@ const EditTransactionModal = ({
     }
   };
 
-  return (
-    isOpen && (
-      <div className="fixed z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white p-6 rounded-md relative w-96">
-          <button
-            className="absolute top-2 right-2 text-xl font-bold"
-            onClick={onClose}
-          >
-            &times;
-          </button>
-          <h2 className="text-xl mb-4">Edit Transaction</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block mb-2">Date</label>
-              <input
-                type="date"
-                name="transaction_date"
-                value={form.transaction_date}
-                onChange={handleChange}
-                className="w-full p-2 border"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Description</label>
-              <input
-                type="text"
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                className="w-full p-2 border"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Amount</label>
-              <input
-                type="number"
-                name="amount"
-                value={form.amount}
-                onChange={handleChange}
-                className="w-full p-2 border"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Currency</label>
-              <select
-                name="currency"
-                value={form.currency}
-                onChange={handleChange}
-                className="w-full p-2 border"
-                required
-              >
-                <option value="" disabled>
-                  Select currency
+ return (
+  isOpen && (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+      <div className="bg-yellow-100 p-6 rounded-lg shadow-lg w-full max-w-md relative">
+        <button
+          className="absolute top-2 right-2 text-2xl font-semibold text-gray-600 hover:text-gray-800"
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        <h2 className="bg-yellow-200 text-2xl font-semibold mb-6 text-gray-800">Edit Transaction</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-700 font-medium">Date</label>
+            <input
+              type="date"
+              name="transaction_date"
+              value={form.transaction_date}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-700 font-medium">Description</label>
+            <input
+              type="text"
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-700 font-medium">Amount</label>
+            <input
+              type="number"
+              name="amount"
+              value={form.amount}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block mb-2 text-gray-700 font-medium">Currency</label>
+            <select
+              name="currency"
+              value={form.currency}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="" disabled>
+                Select currency
+              </option>
+              {currencies.map((currency) => (
+                <option key={currency} value={currency}>
+                  {currency}
                 </option>
-                {currencies.map((currency) => (
-                  <option key={currency} value={currency}>
-                    {currency}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {errorMessage && (
-              <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
-            )}
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={onClose}
-                className="mr-4 p-2 bg-gray-500 text-white rounded"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="p-2 bg-blue-500 text-white rounded"
-              >
-                Update
-              </button>
-            </div>
-          </form>
-        </div>
+              ))}
+            </select>
+          </div>
+          {errorMessage && (
+            <div className="text-red-600 text-sm mb-4 font-medium">{errorMessage}</div>
+          )}
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-400 text-white rounded-md shadow-sm hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Update
+            </button>
+          </div>
+        </form>
       </div>
-    )
-  );
+    </div>
+  )
+);
 };
-
 export default EditTransactionModal;

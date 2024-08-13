@@ -11,8 +11,8 @@ const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <div className="fixed flex h-16 pt-2 shadow-md w-full justify-between items-center px-1 md:px-4 z-10 bg-blue-600">
-      <Link to={"/"}>
+<div className="fixed flex h-16 pt-2 shadow-md w-full justify-between items-center px-1 md:px-4 z-10 bg-yellow-300">
+<Link to={"/"}>
         <div>
           <FaArrowLeft className="w-25 h-14 items-center text-white pb-1 ml-2 text-xl" />
         </div>
@@ -32,25 +32,26 @@ const Header = () => {
         </div> */}
         <div className="relative">
           <div className="flex text-2xl md:text-5xl md:px-4 items-center space-x-2">
-            <div className="max-w-[50px] max-h-[50px]">
-              <img
-                src="https://wallpapers.com/images/featured/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                alt="Profile"
-                className="w-full h-full rounded-full cursor-pointer"
-              />
-            </div>
+          <div className="max-w-[60px] max-h-[60px] pr-3">
+            <img
+              src="https://massmutualventures.com/wp-content/uploads/zluri-.png"
+              alt="Profile"
+              className="w-full h-full rounded-full cursor-pointer"
+            />
+          </div>
+
             <div className="flex-col">
               <div className=" text-base">
                 <div className="flex">
-                  <div className="text-white">Mohak_Zluri</div>
+                  <div className="text-blue-600 font-bold font-sans">Mohak Goyal</div>
                   <MdArrowDropDown
                     onClick={() => setShowMenu(!showMenu)}
-                    className="flex justify-center items-center text-2xl text-white"
+                    className="flex justify-center items-center text-2xl text-black"
                   />
                 </div>
               </div>
 
-              <div className="text-base text-gray-400">SDE Intern</div>
+              <div className="text-base text-blue-600 font-sans">SDE Intern</div>
             </div>
           </div>
           <DropdownMenu showMenu={showMenu} setShowMenu={setShowMenu} />
