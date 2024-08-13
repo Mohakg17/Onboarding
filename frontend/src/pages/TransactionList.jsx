@@ -4,7 +4,8 @@ import EditTransactionModal from "../components/EditTransactionModal";
 import DeleteTransaction from "../components/DeleteTransaction";
 import UploadCSVModal from "../components/UploadCSVModal";
 import { MdOutlineEdit } from "react-icons/md";
-import { LiaRupeeSignSolid} from "react-icons/lia";
+import { LiaRupeeSignSolid } from "react-icons/lia";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const TransactionList = () => {
   const [transactions, setTransactions] = useState([]);
@@ -18,9 +19,7 @@ const TransactionList = () => {
   const fetchTransactions = async () => {
     try {
       const res = await fetch(
-        `${
-          import.meta.env.VITE_APP_SERVER_DOMAIN
-        }/api/transactions/getPaginatedTransactions?page=${page}`
+        `${import.meta.env.VITE_APP_SERVER_DOMAIN}/api/transactions/getPaginatedTransactions?page=${page}`
       );
 
       if (!res.ok) {
@@ -35,11 +34,10 @@ const TransactionList = () => {
   };
 
   const fetchTransactionById = async (transactionId) => {
+    console.log(transactionId);
     try {
       const res = await fetch(
-        `${
-          import.meta.env.VITE_APP_SERVER_DOMAIN
-        }/api/transactions/getSingleTransaction/${transactionId}`
+        `${import.meta.env.VITE_APP_SERVER_DOMAIN}/api/transactions/getSingleTransaction/${transactionId}`
       );
       const data = await res.json();
       setEditingTransaction(data);
@@ -53,10 +51,6 @@ const TransactionList = () => {
     fetchTransactions();
   }, [page]);
 
-  // useEffect(() => {
-  //   console.log(selectedTransactions);
-  // }, [selectedTransactions]);
-
   const handleNextPage = () => setPage((prev) => prev + 1);
   const handlePrevPage = () => setPage((prev) => (prev > 1 ? prev - 1 : 1));
   const setPageTo1 = () => {
@@ -64,45 +58,15 @@ const TransactionList = () => {
     fetchTransactions();
   };
 
-  // const handleCheckboxChange = (transactionId) => {
-  //   // console.log(selectedTransactions);
-
-  //   setSelectedTransactions((prevSelected) =>
-  //     prevSelected.includes(transactionId)
-        // ? prevSelected.filter((id) => id !== transactionId)
-  //       : [...prevSelected, transactionId]
-  //   );
-  //   // console.log(selectedTransactions);
-  // };
-
-  // const handleDeleteSelected = async () => {
-  //   try {
-  //     const res = await fetch(
-  //       `${
-  //         import.meta.env.VITE_APP_SERVER_DOMAIN
-  //       }/api/transactions/deleteTransaction`,
-  //       {
-  //         method: "DELETE",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ transactionIds: selectedTransactions }),
-  //       }
-  //     );
-
-  //     if (res.ok) {
-  //       fetchTransactions();
-  //       setSelectedTransactions([]);
-  //     } else {
-  //       console.error("Failed to delete transactions");
-  //     }
-  //   } catch (err) {
-  //     console.error("Error deleting transactions:", err);
-  //   }
-  // };
+  const handlePageChange = (event) => {
+    const newPage = parseInt(event.target.value, 10);
+    if (!isNaN(newPage) && newPage > 0) {
+      setPage(newPage);
+    }
+  };
 
   return (
-    <div className="container mx-auto p-4 text-sm">
+    <div className="p-4 text-sm">
       <AddTransactionModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -120,102 +84,48 @@ const TransactionList = () => {
         refreshTransactions={fetchTransactions}
         setPageTo1={setPageTo1}
       />
-      <div className="flex justify-center">
-        <div className="">
-          <div className="flex-col items-center justify-center min-w-full ">
-            <div className="flex justify-between bg-slate-150 border-solid border border-gray-200 max-w-[1000px] p-1 px-2 bg-blue-100">
-              <h1 className=" text-black-500 flex items-center text-xl font-normal">
-                All Transactions
-              </h1>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setIsCSVModalOpen(true)}
-                  className="px-4 text-white bg-yellow-700 border-2 font-bold rounded hover:bg-blue-900 "
-                >
-                  UPLOAD CSV
-                </button>
-                <button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="px-8 bg-yellow-700 text-white rounded hover:bg-blue-900 py-2 font-bold "
-                >
-                  ADD NEW TRANSACTION
-                </button>
-              </div>
+      <div className="flex flex-col h-full">
+        <div className="flex flex-col flex-grow">
+          <div className="flex justify-between bg-slate-150 border border-gray-200 p-2 bg-white">
+            <h1 className="text-black-500 text-xl font-bold">All Transactions</h1>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="px-8 bg-blue-500 text-white rounded hover:bg-blue-900 py-2 font-bold"
+              >
+                ADD NEW TRANSACTION
+              </button>
+              <button
+                onClick={() => setIsCSVModalOpen(true)}
+                className="px-8 bg-blue-500 text-white rounded hover:bg-blue-900 py-2 font-bold"
+              >
+                UPLOAD CSV
+              </button>
             </div>
-            <table className=" bg-white border border-gray-100 shadow-2xl ">
-              <thead className="bg-yellow-50 ">
+          </div>
+          <div className="flex-grow overflow-auto">
+            <table className="bg-white border border-gray-100 shadow-2xl w-full text-left mt-4">
+              <thead className="bg-white">
                 <tr>
-                  {/* <th className="px-4 py-4 border-b-2">
-                    <input
-                      type="checkbox"
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedTransactions(
-                            transactions.map((t) => t.id)
-                          );
-                        } else {
-                          setSelectedTransactions([]);
-                        }
-                      }}
-                      checked={
-                        selectedTransactions.length === transactions.length
-                      }
-                    />
-                  </th> */}
-                  <th className="px-4 text-left font-medium py-4 border-b-2">
-                    Date
-                  </th>
-                  <th className="px-4 text-left font-medium min-w-[300px] py-4 border-b-2">
-                    Description
-                  </th>
-                  <th className="px-4 text-left font-medium py-4 border-b-2">
-                    Original Amount
-                  </th>
-                  <th className="px-4 text-left font-medium py-4 border-b-2">
-                    Amount in INR
-                  </th>
-                  <th className="px-4 min-w-[200px] text-left py-4 border-b-2">
-                    {/* {selectedTransactions.length > 0 && (
-                      <button
-                        onClick={handleDeleteSelected}
-                        className="px-4 bg-red-500 text-white rounded hover:bg-red-600 "
-                      >
-                        DELETE SELECTED
-                      </button>
-                    )} */}
-                  </th>
+                  <th className="border-b border-gray-200 px-6 text-left font-bold py-4">Date</th>
+                  <th className="border-b border-gray-200 px-6 text-left font-bold min-w-[300px] py-4">Name</th>
+                  <th className="border-b border-gray-200 px-6 text-left font-bold py-4">Amount</th>
+                  <th className="border-b border-gray-200 px-6 text-left font-bold py-4">Amount (INR)</th>
+                  <th className="border-b border-gray-200 min-w-[200px] text-left"></th>
                 </tr>
               </thead>
               <tbody>
                 {transactions.map((transaction) => (
-                  <tr
-                    key={transaction.id}
-                    className="relative group transition duration-200 ease-in hover:scale-105 hover:bg-slate-200"
-                  >
-                    {/* {console.log(transaction.amount)} */}
-                    {/* <td className="px-4 py-4 border-b">
-                      <input
-                        type="checkbox"
-                        checked={selectedTransactions.includes(transaction.id)}
-                        onChange={() => handleCheckboxChange(transaction.id)}
-                      />
-                    </td> */}
-                    <td className="px-4 py-4 border-b">
-                      {transaction.transaction_date
-                        .split("-")
-                        .reverse()
-                        .join("-")}
-                    </td>
-                    <td className="px-4 py-4 border-b max-w-[100px] truncate pr-10">
-                      {transaction.description}
-                    </td>
-                    <td className="px-4 py-4 border-b">
+                  <tr key={transaction.id} className="relative group transition duration-200 ease-in">
+                    <td className="border-b border-gray-200 px-4 py-4">{transaction.transaction_date}</td>
+                    <td className="border-b border-gray-200 px-4 py-4 max-w-[100px] truncate pr-10">{transaction.description}</td>
+                    <td className="border-b border-gray-200 px-4 py-4">
                       <div className="flex items-center">
                         <span className="mr-1">{transaction.currency}</span>
                         <span>{transaction.amount}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-b">
+                    <td className="border-b border-gray-200 px-4 py-4">
                       <div className="flex items-center">
                         <span className="ml-1">
                           <LiaRupeeSignSolid />
@@ -223,19 +133,13 @@ const TransactionList = () => {
                         <span>{transaction.amountininr}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-b">
+                    <td className="border-b border-gray-200 px-4 py-4">
                       {selectedTransactions.length < 1 && (
-                        <div className="flex space-x-10 absolute right-[50px] top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => fetchTransactionById(transaction.id)}
-                            className="hover:bg-white rounded-full p-4"
-                          >
+                        <div className="flex space-x-10 absolute right-[50px] top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-90 transition-opacity">
+                          <button onClick={() => fetchTransactionById(transaction.id)} className="hover:bg-white rounded-full p-4">
                             <MdOutlineEdit />
                           </button>
-                          <DeleteTransaction
-                            transactionId={transaction.id}
-                            refreshTransactions={fetchTransactions}
-                          />
+                          <DeleteTransaction transactionId={transaction.id} refreshTransactions={fetchTransactions} />
                         </div>
                       )}
                     </td>
@@ -243,28 +147,37 @@ const TransactionList = () => {
                 ))}
               </tbody>
             </table>
-            <div className="flex justify-between bg-slate-150 bg-white border-solid border border-gray-200 max-w-[1000px] p-2">
-              <button
-                onClick={handlePrevPage}
-                disabled={page === 1}
-                className="py-1 px-4 bg-gray-300 rounded mr-2 hover:bg-gray-400"
-              >
-                Previous
-              </button>
-              <div className="shadow-2xl bg-slate-200 px-2 py-1">
-                Page - {page}
-              </div>
-              <button
-                onClick={handleNextPage}
-                className="py-1 px-4 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Next
-              </button>
+          </div>
+        </div>
+        <div className="bg-slate-150 border border-gray-200 p-2 bg-white mt-4 flex justify-end">
+          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
+              <span className="font-bold">Page</span>
+              <input
+                type="number"
+                value={page}
+                onChange={handlePageChange}
+                min="1"
+                className="w-16 text-center border border-gray-300 rounded p-1"
+              />
             </div>
+            <button
+              onClick={handlePrevPage}
+              disabled={page === 1}
+              className="py-1 px-4 bg-gray-300 rounded mr-2 hover:bg-gray-400 flex items-center justify-center"
+            >
+              <FaArrowLeft className="text-gray-800" />
+            </button>
+           
+            <button
+              onClick={handleNextPage}
+              className="py-1 px-4 bg-gray-300 rounded hover:bg-gray-400 font-bold flex items-center justify-center"
+            >
+              <FaArrowRight className="text-gray-800" />
+            </button>
           </div>
         </div>
       </div>
-      <div className="mt-4"></div>
     </div>
   );
 };

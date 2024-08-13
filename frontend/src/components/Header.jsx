@@ -5,13 +5,13 @@ import { FaArrowLeft } from "react-icons/fa6";
 
 import { Link } from "react-router-dom";
 import DropdownMenu from "./DropdownMenu";
-import { MdArrowDropDown } from "react-icons/md";
+// import { MdArrowDropDown } from "react-icons/md";
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-<div className="fixed flex h-16 pt-2 shadow-md w-full justify-between items-center px-1 md:px-4 z-10 bg-yellow-300">
+<div className="fixed flex h-16 pt-2 shadow-md w-full justify-between items-center px-1 md:px-4 z-10 bg-blue-500">
 <Link to={"/"}>
         <div>
           <FaArrowLeft className="w-25 h-14 items-center text-white pb-1 ml-2 text-xl" />
@@ -43,15 +43,15 @@ const Header = () => {
             <div className="flex-col">
               <div className=" text-base">
                 <div className="flex">
-                  <div className="text-blue-600 font-bold font-sans">Mohak Goyal</div>
-                  <MdArrowDropDown
+                  <div className="text-white font-bold font-sans">Mohak Goyal</div>
+                  {/* <MdArrowDropDown
                     onClick={() => setShowMenu(!showMenu)}
                     className="flex justify-center items-center text-2xl text-black"
-                  />
+                  /> */}
                 </div>
               </div>
 
-              <div className="text-base text-blue-600 font-sans">SDE Intern</div>
+              <div className="text-base text-white font-sans">SDE Intern</div>
             </div>
           </div>
           <DropdownMenu showMenu={showMenu} setShowMenu={setShowMenu} />

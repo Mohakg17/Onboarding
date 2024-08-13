@@ -10,7 +10,6 @@ const {
   getPaginatedTransactions,
   getSingleTransaction,
   uploadCSV,
-  // deleteTransactionMultiple,
 } = require("../controllers/transactions");
 const router = express.Router();
 
@@ -20,6 +19,5 @@ router.route("/deleteTransaction/:id").delete(deleteTransaction);
 router.route("/getPaginatedTransactions").get(getPaginatedTransactions);
 router.route("/getSingleTransaction/:id").get(getSingleTransaction);
 router.post("/uploadCSV", upload.single("file"), uploadCSV);
-// router.route("/deleteTransaction").delete(deleteTransactionMultiple);
 
 module.exports = router;

@@ -6,7 +6,7 @@ const currencyExchangeByDate = async (transaction_date, currency) => {
   const options = {
     method: "GET",
     headers: {
-      "x-rapidapi-key": "fbc4b9c9d5msha5686ffd45ef294p134d89jsne5739f53eb4f",
+      "x-rapidapi-key": "6fac4c2ba0mshd230e576ba5a0efp10b020jsn4f50f7a11db2",
       "x-rapidapi-host":
         "currency-conversion-and-exchange-rates.p.rapidapi.com",
     },
@@ -17,7 +17,7 @@ const currencyExchangeByDate = async (transaction_date, currency) => {
     const result = await response.json();
     // console.log(result);
     curr1ToCurr2 = result.rates;
-    // console.log(curr1ToCurr2.INR);
+    // console.log(curr1ToCurr2);
     return curr1ToCurr2;
   } catch (error) {
     console.error(error);
