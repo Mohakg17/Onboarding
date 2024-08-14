@@ -2,7 +2,7 @@
 Build a CSV upload, parser and APIs.Using Node.js an React.js build a simple system that can upload a given CSV file, parse the fields and stores them appropriately inside a Database. The same data should be viewable / editable via APIs.
 
 ## Video Demonstration -
-](https://github.com/user-attachments/assets/bcd650af-b129-4739-8b0e-7d5b2b89a756)
+https://github.com/user-attachments/assets/bcd650af-b129-4739-8b0e-7d5b2b89a756
 
 ## Some Images of ContentCraft
 ![Screenshot (7)](https://github.com/user-attachments/assets/cdd235d7-c151-4645-9172-d76d9f4375be)
