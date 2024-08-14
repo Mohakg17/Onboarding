@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 
 import { Link } from "react-router-dom";
-import DropdownMenu from "./DropdownMenu";
+// import DropdownMenu from "./DropdownMenu";
 // import { MdArrowDropDown } from "react-icons/md";
 
 const Header = () => {
-  const [showMenu, setShowMenu] = useState(false);
+  // const [showMenu, setShowMenu] = useState(false);
 
   return (
 <div className="fixed flex h-16 pt-2 shadow-md w-full justify-between items-center px-1 md:px-4 z-10 bg-blue-500">
@@ -54,7 +54,7 @@ const Header = () => {
               <div className="text-base text-white font-sans">SDE Intern</div>
             </div>
           </div>
-          <DropdownMenu showMenu={showMenu} setShowMenu={setShowMenu} />
+          {/* <DropdownMenu showMenu={showMenu} setShowMenu={setShowMenu} /> */}
         </div>
       </div>
     </div>
