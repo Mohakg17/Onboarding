@@ -160,7 +160,7 @@ const getSingleTransaction = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch transaction" });
   }
 };
-const parseAndSortCSV = (fileContent) => {
+const parseCSV = (fileContent) => {
   
 
   
@@ -177,13 +177,6 @@ const parseAndSortCSV = (fileContent) => {
     return rowObject;
   });
 
-  
-  
-  
-  
-  
-  
-
   return rows;
 };
 
@@ -197,14 +190,8 @@ const uploadCSV = async (req, res) => {
   
     
     
-    const results=parseAndSortCSV(fileContent);
-    const transactions = results;
-    
-    
-    
-    
-    
-    
+    const results=parseCSV(fileContent);
+    const transactions = results;  
     await db.query("BEGIN");
 
     const queryText = `
@@ -216,16 +203,13 @@ const uploadCSV = async (req, res) => {
 
     
 
-    
-    const validCurrencies = Object.keys(c1ToC2);
+    // console.log(c1ToC2,typeof c1ToC2)    
+    // console.log(validCurrencies,typeof validCurrencies)
     const today = new Date();
 
     for (const transaction of transactions) {
       const { Description, Currency } = transaction;
       
-      
-      
-
       if (
         !transaction.Date ||
         !transaction.Amount ||
@@ -259,16 +243,13 @@ const uploadCSV = async (req, res) => {
         
         continue;
       }
-
-      if (!validCurrencies.includes(Currency)) {
+      const validCurrencies=Currency in c1ToC2
+      // console.log(s,typeof s)
+      if (validCurrencies==false) {
         console.warn(
           "Skipping transaction with invalid currency:",
           transaction
-        );
-        
-        
-        
-        
+        );     
         continue;
       }
       if (Description.trim() === "") {
@@ -276,19 +257,8 @@ const uploadCSV = async (req, res) => {
           "Skipping transaction with empty description:",
           transaction
         );
-        
-        
-        
-        
         continue;
-      }
-
-
-      
-        
-      
-
-      
+      }      
 
       const amount = parseFloat(transaction.Amount);
       if (amount < 0) {
